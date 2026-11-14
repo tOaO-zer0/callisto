@@ -225,8 +225,7 @@ namespace callisto {
 		const auto last_sync_time = last_sync_json["last_sync_time"];
 		last_sync_file.close();
 
-		constexpr long long MARKER_TIMESTAMP_MASK{ 0xFFFFFFFFFFLL };
-		if ((rom_epoch & MARKER_TIMESTAMP_MASK) != extracted_information.value().timestamp) {
+		if (rom_epoch != last_sync_time) {
 			// ROM's last modified time & marker timestamp mismatch with our last recorded sync time,
 			// our ROM must have been replaced by another ROM, export all
 			return extractables;
