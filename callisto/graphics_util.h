@@ -106,6 +106,7 @@ namespace callisto {
 				));
 
 				try {
+					fs::create_directories(target);
 					for (const auto& entry : fs::directory_iterator(source)) {
 						const auto destination{ fs::path(target) / entry.path().filename().string() };
 						fs::copy_file(entry.path(), destination, fs::copy_options::overwrite_existing);
@@ -138,7 +139,7 @@ namespace callisto {
 #endif
 
 		static void _create_symlink(const fs::path& link_name, const fs::path& target_name) {
-			if (fs::exists(link_name)) {
+			if (fs::is_symlink(link_name) || fs::exists(link_name)) {
 				fs::remove(link_name);
 			}
 			fs::create_directory_symlink(target_name, link_name);

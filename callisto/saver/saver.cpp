@@ -142,9 +142,8 @@ namespace callisto {
 	}
 
 	void Saver::writeMarkerToRom(const fs::path& rom_path, const Configuration& config) {
-		const auto now{ fs::last_write_time(rom_path) };
-		auto timestamp{ std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count() };
-		const auto now_as_seconds{ std::chrono::time_point<std::chrono::file_clock>(std::chrono::seconds(timestamp)) };
+		const auto timestamp{ Marker::toMarkerTimestamp(fs::last_write_time(rom_path)) };
+		const auto now_as_seconds{ Marker::fromMarkerTimestamp(timestamp) };
 		spdlog::debug("Marker timestamp is {:010X}", timestamp);
 
 		Marker::insertMarkerString(rom_path, getExtractableTypes(config), timestamp);

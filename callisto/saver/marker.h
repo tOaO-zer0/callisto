@@ -60,6 +60,8 @@ namespace callisto {
 		static std::optional<Extracted> extractInformation(const fs::path& rom_path);
 
 	public:
+		static int64_t toMarkerTimestamp(const fs::file_time_type& time);
+		static fs::file_time_type fromMarkerTimestamp(int64_t timestamp);
 		static void insertMarkerString(const fs::path& rom_path, const std::vector<ExtractableType>& extractables, int64_t timestamp);
 		static std::vector<ExtractableType> getNeededExtractions(const fs::path& rom_path, const fs::path& project_root,
 			const std::vector<ExtractableType>& extractables, bool use_text_map16);

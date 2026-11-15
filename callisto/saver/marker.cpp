@@ -1,6 +1,18 @@
 #include "marker.h"
 
 namespace callisto {
+	constexpr int64_t SECONDS_1601_TO_1970{ 11644473600 };
+
+	int64_t Marker::toMarkerTimestamp(const fs::file_time_type& time) {
+		const auto system_time{ std::chrono::file_clock::to_sys(time) };
+		return std::chrono::duration_cast<std::chrono::seconds>(system_time.time_since_epoch()).count() + SECONDS_1601_TO_1970;
+	}
+
+	fs::file_time_type Marker::fromMarkerTimestamp(int64_t timestamp) {
+		const std::chrono::sys_seconds system_time{ std::chrono::seconds(timestamp - SECONDS_1601_TO_1970) };
+		return std::chrono::file_clock::from_sys(system_time);
+	}
+
 	uint16_t Marker::extractablesToBitField(const std::vector<ExtractableType>& extractables) {
 		uint16_t bit_field{ 0 };
 		for (const auto& extractable : extractables) {
@@ -213,7 +225,7 @@ namespace callisto {
 			return extractables;
 		}
 
-		const auto rom_epoch{ std::chrono::duration_cast<std::chrono::seconds>(fs::last_write_time(rom_path).time_since_epoch()).count() };
+		const auto rom_epoch{ toMarkerTimestamp(fs::last_write_time(rom_path)) };
 		
 		if (rom_epoch != extracted_information.value().timestamp) {
 			// Marker timestamp does not match last ROM write time, export all

@@ -24,7 +24,7 @@ namespace callisto {
 		const auto final_output_path{ getExportFolderPath(config, exgfx) };
 
 		if (!fs::exists(final_output_path)) {
-			fs::rename(temporary_exported_folder, final_output_path);
+			moveWithFallback(temporary_exported_folder, final_output_path);
 		}
 		else {
 			fixPotentialExportDiscrepancy(temporary_exported_folder, final_output_path, exgfx, config.allow_user_input);
