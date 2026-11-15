@@ -4,6 +4,14 @@
 #include "header_error.h"
 #include "arrays.h"
 
+static std::istream& get_line(std::istream& stream, std::string& line) {
+	std::getline(stream, line);
+	if (!line.empty() && line.back() == '\r') {
+		line.pop_back();
+	}
+	return stream;
+}
+
 std::shared_ptr<HumanReadableMap16::Header> HumanReadableMap16::to_map16::parse_header_file(const fs::path header_path) {
 	verify_header_file(header_path);
 
@@ -45,7 +53,7 @@ std::shared_ptr<HumanReadableMap16::Header> HumanReadableMap16::to_map16::parse_
 
 	std::string line;
 
-	while (std::getline(file, line)) {
+	while (get_line(file, line)) {
 		std::string starting_string = "comment_field: \"";
 		size_t pos = line.find(starting_string, 0);
 		if (pos != std::string::npos) {

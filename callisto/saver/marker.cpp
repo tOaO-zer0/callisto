@@ -1,16 +1,14 @@
 #include "marker.h"
 
 namespace callisto {
-	constexpr int64_t SECONDS_1601_TO_1970{ 11644473600 };
 
 	int64_t Marker::toMarkerTimestamp(const fs::file_time_type& time) {
-		const auto system_time{ std::chrono::file_clock::to_sys(time) };
-		return std::chrono::duration_cast<std::chrono::seconds>(system_time.time_since_epoch()).count() + SECONDS_1601_TO_1970;
+		const auto system_time{ std::chrono::clock_cast<std::chrono::system_clock>(time) };
+		return std::chrono::time_point_cast<std::chrono::seconds>(system_time).time_since_epoch().count();
 	}
 
 	fs::file_time_type Marker::fromMarkerTimestamp(int64_t timestamp) {
-		const std::chrono::sys_seconds system_time{ std::chrono::seconds(timestamp - SECONDS_1601_TO_1970) };
-		return std::chrono::file_clock::from_sys(system_time);
+		return std::chrono::clock_cast<std::chrono::file_clock>(std::chrono::sys_seconds{ std::chrono::seconds(timestamp) });
 	}
 
 	uint16_t Marker::extractablesToBitField(const std::vector<ExtractableType>& extractables) {

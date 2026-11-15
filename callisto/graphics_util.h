@@ -106,10 +106,11 @@ namespace callisto {
 				));
 
 				try {
+					// target was removed above, and rename can also fail across filesystems (EXDEV on Linux)
 					fs::create_directories(target);
 					for (const auto& entry : fs::directory_iterator(source)) {
 						const auto destination{ fs::path(target) / entry.path().filename().string() };
-						fs::copy_file(entry.path(), destination, fs::copy_options::overwrite_existing);
+						fs::copy(entry.path(), destination, fs::copy_options::overwrite_existing | fs::copy_options::recursive);
 					}
 
 					fs::remove_all(source);
